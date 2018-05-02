@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2043
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaE Racing Analytics", "HaE Racing Analytics\HaE Racing Analytics.csproj", "{DC454434-4497-4F20-AEEB-F4A36B775A4D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC454434-4497-4F20-AEEB-F4A36B775A4D}.Debug|x64.ActiveCfg = Debug|x64
+		{DC454434-4497-4F20-AEEB-F4A36B775A4D}.Debug|x64.Build.0 = Debug|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B8505A27-50BE-4E17-AD02-43217BA0B453}
+	EndGlobalSection
+EndGlobal
