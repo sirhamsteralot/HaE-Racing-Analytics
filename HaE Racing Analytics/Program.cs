@@ -112,7 +112,7 @@ namespace IngameScript
                 return;
             }
 
-            if (fastestLap.laptime < lap.laptime)
+            if (fastestLap.laptime > lap.laptime)
                 fastestLap = lap;
         }
 

@@ -42,7 +42,8 @@ namespace IngameScript
 
                 foreach (DataPoint point in datapoints)
                 {
-                    var diff = (point.time - currentTime).TotalSeconds;
+                    var diff = Math.Abs((point.time - currentTime).TotalSeconds);
+
 
                     if (diff < smallestDiff)
                     {
