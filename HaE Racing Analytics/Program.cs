@@ -28,7 +28,6 @@ namespace IngameScript
         IMyShipController control;
 
         IngameTime ingameTime = new IngameTime();
-        bool stopped = false;
 
         ProjectorVisualization visualization;
 
@@ -81,7 +80,7 @@ namespace IngameScript
 
         public void LogPoint()
         {
-            if (stopped || currentLap == null)
+            if (currentLap == null)
                 return;
 
             currentLap.LogPoint(CurrentLapDiff);
@@ -130,10 +129,6 @@ namespace IngameScript
 
                     currentLap = new LapData(control, ingameTime);
                     currentLapStartTime = ingameTime.Time;
-                    break;
-
-                case "Stop_Resume":
-                    stopped = !stopped;
                     break;
             }
 
