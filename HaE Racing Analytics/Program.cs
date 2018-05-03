@@ -18,14 +18,23 @@ namespace IngameScript
 {
     partial class Program : MyGridProgram
     {
-        public List<LapData> laps = new List<LapData>();
+        static Program P;
 
-        public IMyShipController control;
+        List<LapData> laps = new List<LapData>();
+        LapData fastestLap;
+        LapData currentLap;
+
+
+        IMyShipController control;
 
         IngameTime ingameTime = new IngameTime();
         bool stopped = false;
 
-        TimeSpan lapStartTime;
+        ProjectorVisualization visualization;
+
+        TimeSpan CurrentLapDiff => ingameTime.Time - currentLapStartTime;
+
+        TimeSpan currentLapStartTime;
 
         #region blocknames
         public INISerializer nameSerializer = new INISerializer("BlockNames");
@@ -47,26 +56,47 @@ namespace IngameScript
 
             Runtime.UpdateFrequency = UpdateFrequency.Update10;
             control = GridTerminalSystem.GetBlockWithName(ControlName) as IMyShipController;
+
+            var projector = GridTerminalSystem.GetBlockWithName(ProjectorName) as IMyProjector;
+
+            visualization = new ProjectorVisualization(projector, Vector3I.One);
+
+            P = this;
         }
 
-        public void Main(string argument, UpdateType updateSource)
+        public void SubMain(string argument, UpdateType updateSource)
         {
             ProcessArguments(argument);
+            RenderGhost();
+            LogPoint();
 
             ingameTime.Tick(Runtime.TimeSinceLastRun.TotalMilliseconds);
         }
 
+        public void Main(string argument, UpdateType updateSource)
+        {
+            DebugUtils.MainWrapper(SubMain, argument, updateSource, this);
+        }
+
+
         public void LogPoint()
         {
-            if (laps.Count == 0 || stopped)
+            if (stopped || currentLap == null)
                 return;
 
-            laps[laps.Count - 1].LogPoint(ingameTime.Time - lapStartTime);
+            currentLap.LogPoint(CurrentLapDiff);
         }
 
         public void RenderGhost()
         {
+            if (fastestLap == null)
+                return;
 
+            DataPoint ghostPoint = fastestLap.GetClosePoint(CurrentLapDiff);
+
+            Echo($"Current time: {CurrentLapDiff}\npointTime: {ghostPoint.time}");
+
+            visualization.UpdatePosition(ghostPoint.position);
         }
 
         public void CheckStart()
@@ -74,13 +104,32 @@ namespace IngameScript
 
         }
 
+        public void CheckFastestLap(LapData lap)
+        {
+            if (fastestLap == null)
+            {
+                fastestLap = lap;
+                return;
+            }
+
+            if (fastestLap.laptime < lap.laptime)
+                fastestLap = lap;
+        }
+
         public void ProcessArguments(string argument)
         {
             switch(argument)
             {
                 case "Trigger":
-                    laps.Add(new LapData(control, ingameTime));
-                    lapStartTime = ingameTime.Time;
+                    if (currentLap != null)
+                    {
+                        currentLap.laptime = CurrentLapDiff;
+                        laps.Add(currentLap);
+                        CheckFastestLap(currentLap);
+                    }
+
+                    currentLap = new LapData(control, ingameTime);
+                    currentLapStartTime = ingameTime.Time;
                     break;
 
                 case "Stop_Resume":

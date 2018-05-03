@@ -38,14 +38,17 @@ namespace IngameScript
             public DataPoint GetClosePoint(TimeSpan currentTime)
             {
                 DataPoint closestPoint = datapoints[0];
+                double smallestDiff = double.MaxValue;
 
                 foreach (DataPoint point in datapoints)
                 {
-                    TimeSpan diff = currentTime - point.time;
-                    TimeSpan closestTime = currentTime - closestPoint.time;
+                    var diff = (point.time - currentTime).TotalSeconds;
 
-                    if (diff.TotalSeconds < closestTime.TotalSeconds)
+                    if (diff < smallestDiff)
+                    {
                         closestPoint = point;
+                        smallestDiff = diff;
+                    }
                 }
 
                 return closestPoint;
@@ -61,6 +64,8 @@ namespace IngameScript
                     velocity = controller.GetShipVelocities().LinearVelocity,
                     time = deltaTime
                 };
+
+                datapoints.Add(point);
             }
         }
     }
